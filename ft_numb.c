@@ -50,9 +50,9 @@ uintmax_t	ft_get_uint(t_pf *s, va_list val)
 		if (s->size[0] == '\0')
 			return (va_arg(val, unsigned int));
 		else if (ft_strcmp(s->size, "hh") == 0)
-			return ((unsigned char)va_arg(val, unsigned int));
+			return ((unsigned char)va_arg(val, int));
 		else if (ft_strcmp(s->size, "h") == 0)
-			return ((unsigned short)va_arg(val, unsigned int));
+			return ((unsigned short int)va_arg(val, int));
 	}
 	return (va_arg(val, uintmax_t));
 }
@@ -65,7 +65,7 @@ intmax_t	ft_get_int(t_pf *s, va_list val)
 	|| s->size[0] == 'z' || s->type == 'D')
 		n = va_arg(val, intmax_t);
 	else if (s->size[0] == 'h' && s->size[1] == 'h')
-		n = (signed char)va_arg(val, int);
+		n = (char)va_arg(val, int);
 	else if (s->size[0] == 'h')
 		n = (short)va_arg(val, int);
 	else

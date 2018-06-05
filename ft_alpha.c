@@ -17,7 +17,7 @@ void			ft_unicode(t_pf *s, int uni)
 	unsigned char mass[4];
 
 	ft_bzero(mass, 4);
-	if (uni < 256)
+	if (uni < 128)
 		mass[0] = uni;
 	else if (uni < 2048)
 	{
@@ -48,7 +48,7 @@ int				ft_str_len(int *c, t_pf *s)
 	sum = 0;
 	while (c && *c)
 	{
-		if (*c < 256 && (sum + 1 <= s->prec || s->prec == -1))
+		if (*c < 128 && (sum + 1 <= s->prec || s->prec == -1))
 			sum += 1;
 		else if (*c < 2048 && (sum + 2 <= s->prec || s->prec == -1))
 			sum += 2;
