@@ -125,6 +125,7 @@ int		ft_printf(const char *format, ...)
 		format++;
 		s = (t_pf *)malloc(sizeof(t_pf));
 		s->sum = 0;
+		s->width = 0;
 		s->i = 0;
 		parse_it((char **)&format, val, s);
 		sum += s->sum;
