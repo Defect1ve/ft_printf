@@ -15,6 +15,7 @@
 
 # include <unistd.h>
 # include <stdlib.h>
+# include <locale.h>
 # include <stdarg.h>
 # include "libft.h"
 # define BUFF_SIZE 100

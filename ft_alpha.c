@@ -14,9 +14,9 @@
 
 void			ft_unicode(t_pf *s, int uni)
 {
-	unsigned char mass[4];
+	unsigned char mass[5];
 
-	ft_bzero(mass, 4);
+	ft_bzero(mass, 5);
 	if (uni < 128)
 		mass[0] = uni;
 	else if (uni < 2048)
@@ -34,8 +34,8 @@ void			ft_unicode(t_pf *s, int uni)
 	{
 		mass[3] = 128 | (uni % 64);
 		mass[2] = 128 | (uni % 4096 / 64);
-		mass[1] = 128 | (uni % 524287 / 4096);
-		mass[0] = 240 | (uni / 524287);
+		mass[1] = 128 | (uni % 524288 / 4096);
+		mass[0] = 240 | (uni / 524288);
 	}
 	if ((int)ft_strlen((char *)mass) <= s->prec)
 		ft_buf_add_str(s, mass);
