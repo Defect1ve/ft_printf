@@ -80,11 +80,11 @@ void	parse_it(char **str, va_list val, t_pf *s)
 {
 	s->prec = -1;
 	s->type = 0;
+	ft_bzero(s->size, 2);
 	ft_flags(s, str);
 	ft_width(str, val, s);
-	if (**str == '.')
+	if (**str == '.' && (*str)++)
 	{
-		(*str)++;
 		s->prec = 0;
 		while ((**str > 47 && **str < 58) || **str == '*')
 		{
