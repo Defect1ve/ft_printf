@@ -72,18 +72,22 @@ void			ft_long_string(t_pf *s, va_list val)
 	if (!c)
 	{
 		s->prec = 6;
+		if (!(s->flags & 2))
+			ft_manage_str(s, 6);
 		ft_buf_add_str(s, NULL);
+		if (s->flags & 2)
+			ft_manage_str(s, 6);
 		return ;
 	}
 	len = ft_str_len(c, s);
 	if (s->prec == -1 && c)
 		s->prec = len;
-	if ((!(s->flags & 2)) && s->width > s->prec && s->prec > (int)len)
-		s->i += s->width - len;
-	else if ((!(s->flags & 2)) && s->width > s->prec)
-		s->i += s->width - s->prec;
+	if (!(s->flags & 2))
+		ft_manage_str(s, len);
 	while (c && *c && s->prec > 0)
 		ft_unicode(s, *c++);
+	if (s->flags & 2)
+		ft_manage_str(s, len);
 }
 
 void			ft_string(t_pf *s, va_list val)
@@ -91,23 +95,22 @@ void			ft_string(t_pf *s, va_list val)
 	unsigned char	*str;
 	size_t			len;
 
-	ft_manage_str(s);
+	len = 6;
 	if (s->type == 'S' || (s->type == 's' && s->size[0] == 'l'))
 		ft_long_string(s, val);
 	else if (s->type == 's')
 	{
-		str = va_arg(val, unsigned char *);
-		if (str)
+		if ((str = va_arg(val, unsigned char *)))
 			len = ft_strlen((char *)str);
 		if (s->prec == -1 && str)
 			s->prec = len;
 		if (s->prec == -1 && !str)
 			s->prec = 6;
-		if (!(s->flags & 2) && str && s->prec > (int)len && s->width > (int)len)
-			s->i += s->width - len;
-		else if (!(s->flags & 2) && s->width > s->prec)
-			s->i += s->width - s->prec;
+		if (!(s->flags & 2))
+			ft_manage_str(s, len);
 		ft_buf_add_str(s, str);
+		if (s->flags & 2)
+			ft_manage_str(s, len);
 	}
 }
 
@@ -116,26 +119,24 @@ void			ft_char(t_pf *s, va_list val)
 	wchar_t			c;
 	int				len;
 
-	ft_manage_str(s);
 	c = va_arg(val, wchar_t);
 	if (s->type == 'C' || (s->type == 'c' && s->size[0] == 'l'))
 	{
 		len = ft_str_len(&c, s);
 		if (s->prec == -1)
 			s->prec = len;
-		if (!(s->flags & 2) && s->width > len)
-			s->i += s->width - s->prec;
-		if (!c)
-			s->buf[s->i++] = c;
-		else
-			ft_unicode(s, c);
 	}
 	else if (s->type == 'c')
 	{
 		if (s->prec == -1 || s->prec == 0)
 			s->prec = 1;
-		if (!(s->flags & 2) && s->width > 1)
-			s->i += s->width - s->prec;
-		s->buf[s->i++] = c;
 	}
+	if (!(s->flags & 2))
+		ft_manage_str(s, len);
+	if (!c || (s->type == 'c' && s->size[0] != 'l'))
+		s->buf[s->i++] = c;
+	else
+		ft_unicode(s, c);
+	if (s->flags & 2)
+		ft_manage_str(s, len);
 }

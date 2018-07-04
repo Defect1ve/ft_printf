@@ -23,24 +23,29 @@ void		ft_s_base(t_pf *s, uintmax_t n, char *base)
 {
 	uintmax_t	b;
 	uintmax_t	p;
-	uintmax_t	h;
 
-	h = n;
 	p = 1;
 	b = ft_strlen(base);
 	while (n / ft_pow(b, p - 1) >= b)
 		p++;
-	ft_manage_numb(s, p, n);
-	if (s->prec == 0 && n == 0)
-		return ;
-	while (1)
+	if (!(s->flags & 2))
+		ft_manage_numb(s, p, n);
+	ft_mng_nb1(s, n);
+	while ((s->flags & 4 && s->width > (int)p && s->prec == -1 &&
+	!(s->flags & 2)) || (s->prec > 0 && (uintmax_t)s->prec > p))
 	{
-		if (!p)
-			break ;
+		if (s->prec > 0)
+			s->prec--;
+		ft_buf_add_numb(s, '0');
+	}
+	while (p && !(s->prec == 0 && n == 0))
+	{
 		ft_buf_add_numb(s, base[n / ft_pow(b, p - 1)]);
 		n = n - n / ft_pow(b, p - 1) * ft_pow(b, p - 1);
 		p--;
 	}
+	if (s->flags & 2)
+		ft_manage_numb(s, p, n);
 }
 
 uintmax_t	ft_get_uint(t_pf *s, va_list val)

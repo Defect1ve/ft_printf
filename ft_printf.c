@@ -67,10 +67,11 @@ void	handle_it(t_pf *s, va_list val)
 	{
 		if (s->prec == -1 || s->prec == 0)
 			s->prec = 1;
-		ft_manage_str(s);
-		if (!(s->flags & 2) && s->width > 1)
-			s->i += s->width - 1;
+		if (!(s->flags & 2))
+			ft_manage_str(s, 1);
 		ft_unicode(s, s->type);
+		if (s->flags & 2)
+			ft_manage_str(s, 1);
 	}
 	ft_buf_print(s);
 	free(s);

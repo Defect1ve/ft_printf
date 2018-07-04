@@ -14,6 +14,8 @@
 
 void	ft_buf_add_numb(t_pf *s, unsigned char symbol)
 {
+	if (s->i == BUFF_SIZE - 1)
+		ft_buf_print(s);
 	if (!symbol)
 	{
 		if (s->width > s->prec)
@@ -22,7 +24,10 @@ void	ft_buf_add_numb(t_pf *s, unsigned char symbol)
 		s->i += 6;
 	}
 	if (symbol)
+	{
+		s->width--;
 		s->buf[s->i++] = symbol;
+	}
 }
 
 void	ft_buf_add_str(t_pf *s, unsigned char *str)
@@ -35,16 +40,17 @@ void	ft_buf_add_str(t_pf *s, unsigned char *str)
 	}
 	while (str && *str && s->prec > 0)
 	{
-		if ((s->prec + s->i) > BUFF_SIZE)
+		if (s->i == BUFF_SIZE - 1)
 			ft_buf_print(s);
 		s->buf[s->i++] = *str++;
 		s->prec--;
+		s->width--;
 	}
 }
 
 void	ft_buf_print(t_pf *s)
 {
-	while (s->buf[s->i] != '\0')
+	while (s->buf[s->i] != '\0' && s->i < BUFF_SIZE)
 		s->i++;
 	s->sum += s->i;
 	write(1, s->buf, s->i);
