@@ -59,4 +59,6 @@ void	ft_buf_add_char(t_pf *s, unsigned char c)
 	if (s->i == BUFF_SIZE - 1)
 		ft_buf_print(s);
 	s->buf[s->i++] = c;
+	s->prec--;
+	s->width--;
 }

@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-void			ft_unicode(t_pf *s, int uni)
+void			ft_unicode(t_pf *s, int uni, int is_char)
 {
 	unsigned char mass[5];
 
@@ -37,7 +37,7 @@ void			ft_unicode(t_pf *s, int uni)
 		mass[1] = 128 | (uni % 524288 / 4096);
 		mass[0] = 240 | (uni / 524288);
 	}
-	if ((int)ft_strlen((char *)mass) <= s->prec)
+	if ((int)ft_strlen((char *)mass) <= s->prec || is_char)
 		ft_buf_add_str(s, mass);
 }
 
@@ -58,8 +58,8 @@ int				ft_str_len(int *c, t_pf *s, char type)
 			sum += 4;
 		else
 			break ;
-		if (type == 'c')
-			break;
+		if (type == 'c' || type == 'C')
+			break ;
 		c++;
 	}
 	return (sum);
@@ -69,18 +69,15 @@ void			ft_long_string(t_pf *s, wchar_t *c)
 {
 	size_t			len;
 
-	if (!c)
-	{
+	if (s->prec == -1 && !c)
 		s->prec = 6;
-		(!(s->flags & 2)) ? ft_manage_str(s, 6) : ft_buf_add_str(s, NULL);
-		(s->flags & 2) ? ft_manage_str(s, 6) : ft_buf_add_str(s, NULL);
-		return ;
-	}
 	len = ft_str_len(c, s, 's');
 	if (s->prec == -1 && c)
 		s->prec = len;
 	if (!(s->flags & 2))
 		ft_manage_str(s, len);
+	if (!c)
+		ft_buf_add_str(s, NULL);
 	while (c && *c && s->prec > 0)
 	{
 		if (*c > 256 && MB_CUR_MAX <= 1)
@@ -88,10 +85,10 @@ void			ft_long_string(t_pf *s, wchar_t *c)
 			s->sum = -1;
 			return ;
 		}
-		ft_unicode(s, *c++);
+		ft_unicode(s, *c++, 0);
 	}
 	if (s->flags & 2)
-		ft_manage_str(s, len);
+		ft_manage_str(s, 0);
 }
 
 void			ft_string(t_pf *s, va_list val)
@@ -118,7 +115,7 @@ void			ft_string(t_pf *s, va_list val)
 			ft_manage_str(s, len);
 		ft_buf_add_str(s, str);
 		if (s->flags & 2)
-			ft_manage_str(s, len);
+			ft_manage_str(s, 0);
 	}
 }
 
@@ -127,24 +124,26 @@ void			ft_char(t_pf *s, va_list val)
 	wchar_t			c;
 	int				len;
 
+	len = 1;
 	c = va_arg(val, wchar_t);
 	if (s->type == 'C' || (s->type == 'c' && s->size[0] == 'l'))
-		len = ft_str_len(&c, s, 'c');
-	else if (s->type == 'c')
-		len = 1;
-	if (s->prec == -1 || s->prec == 0)
+	{
+		s->prec = (MB_CUR_MAX > 1) ? 4 : 1;
+		len = (c < 256) ? 2 : ft_str_len(&c, s, 'c');
+	}
+	if (s->prec < 1 && s->type == 'c' && s->size[0] != 'l')
 		s->prec = len;
 	if (!(s->flags & 2))
 		ft_manage_str(s, len);
 	if (MB_CUR_MAX > 1 && c > 0 && (s->type == 'C' || s->size[0] == 'l'))
-		ft_unicode(s, c);
+		ft_unicode(s, c, 1);
 	else if ((c >= 0 && c <= 256) || s->type == 'c')
-		s->buf[s->i++] = c;
+		ft_buf_add_char(s, c);
 	else
 	{
 		s->sum = -1;
 		return ;
 	}
 	if (s->flags & 2)
-		ft_manage_str(s, len);
+		ft_manage_str(s, 0);
 }

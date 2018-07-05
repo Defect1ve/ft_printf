@@ -31,8 +31,14 @@ void	ft_manage_str(t_pf *s, int l)
 		}
 }
 
-void	ft_mng_nb2(t_pf *s, uintmax_t n)
+void	ft_mng_nb1(t_pf *s, uintmax_t n)
 {
+	if (s->flags & 16 && (s->type == 'd' || s->type == 'D' || s->type == 'i')
+	&& !(s->flags & 1) && (s->sign != '-'))
+		ft_buf_add_numb(s, ' ');
+	if ((s->type == 'd' || s->type == 'D' || s->type == 'i') && (s->sign == '-'
+	|| (s->flags & 1)))
+		ft_buf_add_numb(s, s->sign);
 	if ((s->flags & 8 && (n != 0 || ((s->type == 'o' || s->type == 'O')
 	&& s->prec != -1))) || s->type == 'p')
 	{
@@ -51,17 +57,6 @@ void	ft_mng_nb2(t_pf *s, uintmax_t n)
 	}
 }
 
-void	ft_mng_nb1(t_pf *s, uintmax_t n)
-{
-	if (s->flags & 16 && (s->type == 'd' || s->type == 'D' || s->type == 'i')
-	&& !(s->flags & 1) && (s->sign != '-'))
-		ft_buf_add_numb(s, ' ');
-	if ((s->type == 'd' || s->type == 'D' || s->type == 'i') && (s->sign == '-'
-	|| (s->flags & 1)))
-		ft_buf_add_numb(s, s->sign);
-	ft_mng_nb2(s, n);
-}
-
 void	ft_spaces(int w, t_pf *s, uintmax_t b)
 {
 	if (w != 0 && (!(s->flags & 4) || s->flags & 2 ||
@@ -74,30 +69,39 @@ void	ft_spaces(int w, t_pf *s, uintmax_t b)
 		}
 }
 
+int		ft_manage_help(int w, t_pf *s, uintmax_t b, uintmax_t n)
+{
+	if ((!(s->flags & 2)) && s->width != 0 &&
+	(!(s->flags & 4) || s->prec != -1))
+	{
+		if (s->flags & 16 && (s->type == 'd' || s->type == 'D' ||
+		s->type == 'i') && !(s->flags & 1) && (s->sign != '-'))
+			w--;
+		if (s->flags & 8 && (s->type == 'o' || s->type == 'O') && n != 0)
+		{
+			if (s->prec > 0)
+				s->prec--;
+			w--;
+		}
+		if ((s->flags & 8 && (s->type == 'x' || s->type == 'X') && n != 0)
+		|| s->type == 'p')
+			w -= 2;
+		if (s->prec != -1 && s->prec > (int)b)
+			w -= s->prec - b;
+	}
+	return (w);
+}
+
 void	ft_manage_numb(t_pf *s, uintmax_t b, uintmax_t n)
 {
 	int w;
 
 	w = s->width;
 	if (n == 0 && s->prec == 0)
-		w += 1;
+		b = 0;
 	if ((s->type == 'd' || s->type == 'D' || s->type == 'i') && (s->sign == '-'
 	|| (s->flags & 1)) && !(s->flags & 2))
 		w--;
-	if ((!(s->flags & 2)) && s->width != 0 &&
-	(!(s->flags & 4) || s->prec != -1))
-	{
-		if (s->flags & 16)
-			w--;
-		if (b == 10 && s->i > 0 && s->buf[s->i - 1] != '-' && (s->flags & 1))
-			w--;
-		if (s->flags & 8 && (s->type == 'o' || s->type == 'O'))
-			w--;
-		if ((s->flags & 8 && (s->type == 'x' || s->type == 'X'))
-		|| s->type == 'p')
-			w -= 2;
-		if (s->prec != -1 && s->prec > (int)b)
-			w -= s->prec - b;
-	}
+	w = ft_manage_help(w, s, b, n);
 	ft_spaces(w, s, b);
 }
