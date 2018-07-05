@@ -57,3 +57,10 @@ void	ft_buf_print(t_pf *s)
 	s->i = 0;
 	ft_bzero(s->buf, BUFF_SIZE);
 }
+
+void	ft_buf_add_char(t_pf *s, unsigned char c)
+{
+	if (s->i == BUFF_SIZE - 1)
+		ft_buf_print(s);
+	s->buf[s->i++] = c;
+}

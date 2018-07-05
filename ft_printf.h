@@ -18,7 +18,7 @@
 # include <locale.h>
 # include <stdarg.h>
 # include "libft.h"
-# define BUFF_SIZE 6
+# define BUFF_SIZE 100
 # define N_STR "(null)"
 
 typedef	struct	s_pf
@@ -27,7 +27,7 @@ typedef	struct	s_pf
 	int		prec;
 	int		width;
 	char	type;
-	char	size[2];
+	char	size[3];
 	char	buf[BUFF_SIZE];
 	int		i;
 	int		sum;
@@ -45,5 +45,6 @@ void			ft_buf_add_numb(t_pf *s, unsigned char symbol);
 void			ft_unicode(t_pf *s, int uni);
 void			ft_manage_numb(t_pf *s, uintmax_t b, uintmax_t n);
 void			ft_mng_nb1(t_pf *s, uintmax_t n);
+void			ft_buf_add_char(t_pf *s, unsigned char c);
 
 #endif

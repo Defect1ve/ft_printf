@@ -34,6 +34,9 @@ void	ft_flags(t_pf *s, char **f)
 
 void	ft_width(char **str, va_list val, t_pf *s)
 {
+	s->prec = -1;
+	s->type = 0;
+	s->width = 0;
 	while ((**str > 47 && **str < 58) || **str == '*')
 	{
 		if (**str > 47 && **str < 58)
@@ -54,7 +57,6 @@ void	handle_it(t_pf *s, va_list val)
 {
 	if (s->prec != -1 && s->prec < 0)
 		s->prec = -1;
-	ft_bzero(s->buf, BUFF_SIZE);
 	if (s->type == 's' || s->type == 'S')
 		ft_string(s, val);
 	else if (s->type == 'c' || s->type == 'C')
@@ -73,15 +75,12 @@ void	handle_it(t_pf *s, va_list val)
 		if (s->flags & 2)
 			ft_manage_str(s, 1);
 	}
-	ft_buf_print(s);
-	free(s);
 }
 
 void	parse_it(char **str, va_list val, t_pf *s)
 {
-	s->prec = -1;
-	s->type = 0;
-	ft_bzero(s->size, 2);
+	(*str)++;
+	ft_bzero(s->size, sizeof(s->size));
 	ft_flags(s, str);
 	ft_width(str, val, s);
 	if (**str == '.' && (*str)++)
@@ -110,27 +109,26 @@ int		ft_printf(const char *format, ...)
 {
 	va_list	val;
 	t_pf	*s;
-	int		sum;
 
-	sum = 0;
 	va_start(val, format);
+	s = (t_pf *)malloc(sizeof(t_pf));
+	ft_bzero(s->buf, BUFF_SIZE);
+	s->i = 0;
+	s->sum = 0;
 	while (format && *format)
 	{
 		while (*format && *format != '%')
+			ft_buf_add_char(s, *(format)++);
+		if (*format == '%')
+			parse_it((char **)&format, val, s);
+		if (s->sum == -1)
 		{
-			write(1, format++, 1);
-			sum++;
-			if (!(*format))
-				return (sum);
+			free(s);
+			return (s->sum);
 		}
-		format++;
-		s = (t_pf *)malloc(sizeof(t_pf));
-		s->sum = 0;
-		s->width = 0;
-		s->i = 0;
-		parse_it((char **)&format, val, s);
-		sum += s->sum;
 	}
+	ft_buf_print(s);
+	free(s);
 	va_end(val);
-	return (sum);
+	return (s->sum);
 }
