@@ -24,7 +24,7 @@ void	ft_manage_str(t_pf *s, int l)
 		{
 			if (s->i == BUFF_SIZE - 1)
 				ft_buf_print(s);
-			if (s->flags & 4)
+			if (s->flags & 4 && (!(s->flags & 2)))
 				s->buf[s->i++] = '0';
 			else
 				s->buf[s->i++] = ' ';

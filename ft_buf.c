@@ -33,11 +33,7 @@ void	ft_buf_add_numb(t_pf *s, unsigned char symbol)
 void	ft_buf_add_str(t_pf *s, unsigned char *str)
 {
 	if (!str)
-	{
-		if (s->width > s->prec && s->prec != 0)
-			s->i += s->width - s->prec;
 		str = (unsigned char *)N_STR;
-	}
 	while (str && *str && s->prec > 0)
 	{
 		if (s->i == BUFF_SIZE - 1)

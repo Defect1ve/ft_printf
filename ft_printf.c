@@ -71,7 +71,7 @@ void	handle_it(t_pf *s, va_list val)
 			s->prec = 1;
 		if (!(s->flags & 2))
 			ft_manage_str(s, 1);
-		ft_unicode(s, s->type);
+		s->buf[s->i++] = s->type;
 		if (s->flags & 2)
 			ft_manage_str(s, 1);
 	}
