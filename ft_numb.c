@@ -12,25 +12,8 @@
 
 #include "ft_printf.h"
 
-uintmax_t	ft_pow(uintmax_t b, uintmax_t p)
+void		ft_base_help(t_pf *s, uintmax_t p)
 {
-	if (p == 0)
-		return (1);
-	return (b * ft_pow(b, p - 1));
-}
-
-void		ft_s_base(t_pf *s, uintmax_t n, char *base)
-{
-	uintmax_t	b;
-	uintmax_t	p;
-
-	p = 1;
-	b = ft_strlen(base);
-	while (n / ft_pow(b, p - 1) >= b)
-		p++;
-	if (!(s->flags & 2))
-		ft_manage_numb(s, p, n);
-	ft_mng_nb1(s, n);
 	while ((s->flags & 4 && s->width > (int)p && s->prec == -1 &&
 	!(s->flags & 2)) || (s->prec > 0 && (uintmax_t)s->prec > p))
 	{
@@ -38,7 +21,24 @@ void		ft_s_base(t_pf *s, uintmax_t n, char *base)
 			s->prec--;
 		ft_buf_add_numb(s, '0');
 	}
-	while (p && !(s->prec == 0 && n == 0))
+}
+
+void		ft_s_base(t_pf *s, uintmax_t n, char *base)
+{
+	uintmax_t	b;
+	uintmax_t	p;
+	uintmax_t	copy;
+
+	copy = n;
+	p = 1;
+	b = ft_strlen(base);
+	while (n / ft_pow(b, p - 1) >= b)
+		p++;
+	if (!(s->flags & 2))
+		ft_manage_numb(s, p, n);
+	ft_mng_nb1(s, n);
+	ft_base_help(s, p);
+	while (p && !(s->prec == 0 && copy == 0))
 	{
 		ft_buf_add_numb(s, base[n / ft_pow(b, p - 1)]);
 		n = n - n / ft_pow(b, p - 1) * ft_pow(b, p - 1);

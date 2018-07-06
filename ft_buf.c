@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-void	ft_buf_add_numb(t_pf *s, unsigned char symbol)
+void		ft_buf_add_numb(t_pf *s, unsigned char symbol)
 {
 	if (s->i == BUFF_SIZE - 1)
 		ft_buf_print(s);
@@ -30,7 +30,7 @@ void	ft_buf_add_numb(t_pf *s, unsigned char symbol)
 	}
 }
 
-void	ft_buf_add_str(t_pf *s, unsigned char *str)
+void		ft_buf_add_str(t_pf *s, unsigned char *str)
 {
 	if (!str)
 		str = (unsigned char *)N_STR;
@@ -44,7 +44,7 @@ void	ft_buf_add_str(t_pf *s, unsigned char *str)
 	}
 }
 
-void	ft_buf_print(t_pf *s)
+void		ft_buf_print(t_pf *s)
 {
 	while (s->buf[s->i] != '\0' && s->i < BUFF_SIZE)
 		s->i++;
@@ -54,11 +54,18 @@ void	ft_buf_print(t_pf *s)
 	ft_bzero(s->buf, BUFF_SIZE);
 }
 
-void	ft_buf_add_char(t_pf *s, unsigned char c)
+void		ft_buf_add_char(t_pf *s, unsigned char c)
 {
 	if (s->i == BUFF_SIZE - 1)
 		ft_buf_print(s);
 	s->buf[s->i++] = c;
 	s->prec--;
 	s->width--;
+}
+
+uintmax_t	ft_pow(uintmax_t b, uintmax_t p)
+{
+	if (p == 0)
+		return (1);
+	return (b * ft_pow(b, p - 1));
 }

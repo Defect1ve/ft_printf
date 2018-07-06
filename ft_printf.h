@@ -46,5 +46,6 @@ void			ft_unicode(t_pf *s, int uni, int is_char);
 void			ft_manage_numb(t_pf *s, uintmax_t b, uintmax_t n);
 void			ft_mng_nb1(t_pf *s, uintmax_t n);
 void			ft_buf_add_char(t_pf *s, unsigned char c);
+uintmax_t		ft_pow(uintmax_t b, uintmax_t p);
 
 #endif

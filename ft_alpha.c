@@ -129,7 +129,7 @@ void			ft_char(t_pf *s, va_list val)
 	if (s->type == 'C' || (s->type == 'c' && s->size[0] == 'l'))
 	{
 		s->prec = (MB_CUR_MAX > 1) ? 4 : 1;
-		len = (c < 256) ? 2 : ft_str_len(&c, s, 'c');
+		len = (c < 256) ? ((c < 128) ? 1 : 2) : ft_str_len(&c, s, 'c');
 	}
 	if (s->prec < 1 && s->type == 'c' && s->size[0] != 'l')
 		s->prec = len;

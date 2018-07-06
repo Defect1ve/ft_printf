@@ -79,9 +79,8 @@ int		ft_manage_help(int w, t_pf *s, uintmax_t b, uintmax_t n)
 			w--;
 		if (s->flags & 8 && (s->type == 'o' || s->type == 'O') && n != 0)
 		{
-			if (s->prec > 0)
-				s->prec--;
-			w--;
+			if (s->prec <= (int)b)
+				w--;
 		}
 		if ((s->flags & 8 && (s->type == 'x' || s->type == 'X') && n != 0)
 		|| s->type == 'p')
