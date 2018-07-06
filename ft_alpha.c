@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-void			ft_unicode(t_pf *s, int uni, int is_char)
+void			ft_unicode(t_pf *s, int uni)
 {
 	unsigned char mass[5];
 
@@ -37,8 +37,7 @@ void			ft_unicode(t_pf *s, int uni, int is_char)
 		mass[1] = 128 | (uni % 524288 / 4096);
 		mass[0] = 240 | (uni / 524288);
 	}
-	if ((int)ft_strlen((char *)mass) <= s->prec || is_char)
-		ft_buf_add_str(s, mass);
+	ft_buf_add_str(s, mass);
 }
 
 int				ft_str_len(int *c, t_pf *s, char type)
@@ -46,6 +45,8 @@ int				ft_str_len(int *c, t_pf *s, char type)
 	int sum;
 
 	sum = 0;
+	if (!c)
+		return (6);
 	while (c && *c)
 	{
 		if (*c < 128 && (sum + 1 <= s->prec || s->prec == -1))
@@ -69,11 +70,9 @@ void			ft_long_string(t_pf *s, wchar_t *c)
 {
 	size_t			len;
 
-	if (s->prec == -1 && !c)
-		s->prec = 6;
 	len = ft_str_len(c, s, 's');
-	if (s->prec == -1 && c)
-		s->prec = len;
+	if (s->prec == -1)
+		s->prec = (c) ? len : 6;
 	if (!(s->flags & 2))
 		ft_manage_str(s, len);
 	if (!c)
@@ -85,7 +84,11 @@ void			ft_long_string(t_pf *s, wchar_t *c)
 			s->sum = -1;
 			return ;
 		}
-		ft_unicode(s, *c++, 0);
+		if (SIZE((int)*c) <= s->prec)
+			ft_unicode(s, *c);
+		else
+			break ;
+		c++;
 	}
 	if (s->flags & 2)
 		ft_manage_str(s, 0);
@@ -129,14 +132,14 @@ void			ft_char(t_pf *s, va_list val)
 	if (s->type == 'C' || (s->type == 'c' && s->size[0] == 'l'))
 	{
 		s->prec = (MB_CUR_MAX > 1) ? 4 : 1;
-		len = (c < 256) ? ((c < 128) ? 1 : 2) : ft_str_len(&c, s, 'c');
+		len = LEN(c);
 	}
 	if (s->prec < 1 && s->type == 'c' && s->size[0] != 'l')
 		s->prec = len;
 	if (!(s->flags & 2))
 		ft_manage_str(s, len);
 	if (MB_CUR_MAX > 1 && c > 0 && (s->type == 'C' || s->size[0] == 'l'))
-		ft_unicode(s, c, 1);
+		ft_unicode(s, c);
 	else if ((c >= 0 && c <= 256) || s->type == 'c')
 		ft_buf_add_char(s, c);
 	else

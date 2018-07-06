@@ -20,6 +20,8 @@
 # include "libft.h"
 # define BUFF_SIZE 100
 # define N_STR "(null)"
+# define SIZE(c) (c < 128) ? 1 : ((c < 2048) ?  2 : ((c < 65536) ? 3 : 4))
+# define LEN(c) (c < 256) ? ((c < 128) ? 1 : 2) : ft_str_len(&c, s, 'c')
 
 typedef	struct	s_pf
 {
@@ -42,7 +44,7 @@ void			ft_buf_print(t_pf *s);
 void			ft_manage_str(t_pf *s, int l);
 void			ft_buf_add_str(t_pf *s, unsigned char *str);
 void			ft_buf_add_numb(t_pf *s, unsigned char symbol);
-void			ft_unicode(t_pf *s, int uni, int is_char);
+void			ft_unicode(t_pf *s, int uni);
 void			ft_manage_numb(t_pf *s, uintmax_t b, uintmax_t n);
 void			ft_mng_nb1(t_pf *s, uintmax_t n);
 void			ft_buf_add_char(t_pf *s, unsigned char c);
